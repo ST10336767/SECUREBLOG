@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "helmet": "^8.1.0",
+    "mongodb": "^6.18.0"
+  }
+}
