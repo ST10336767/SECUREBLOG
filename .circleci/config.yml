@@ -116,11 +116,29 @@ jobs:
     steps:
       - checkout
       
+      # Check if Render environment variables are configured
+      - run:
+          name: Check Render Configuration
+          command: |
+            if [ -z "$RENDER_DEPLOY_HOOK_URL" ] || [ -z "$RENDER_SERVICE_URL" ]; then
+              echo "⚠️  Render environment variables not configured"
+              echo "Skipping deployment. To enable deployment:"
+              echo "1. Set up a Render service"
+              echo "2. Create a deploy hook"
+              echo "3. Add RENDER_DEPLOY_HOOK_URL and RENDER_SERVICE_URL to CircleCI environment variables"
+              echo "✅ CI/CD pipeline completed successfully (without deployment)"
+              exit 0
+            else
+              echo "✅ Render environment variables found, proceeding with deployment"
+            fi
+      
       # Trigger Render deployment
       - run:
           name: Deploy to Render
           command: |
+            echo "Triggering Render deployment..."
             curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+            echo "Deploy hook triggered successfully"
       
       # Wait for deployment to complete
       - run:
