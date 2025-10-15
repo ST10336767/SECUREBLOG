@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: secureblog-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: secureblog
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongodb-init:/docker-entrypoint-initdb.d
+    networks:
+      - secureblog-network
+
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend-build
+    container_name: secureblog-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://admin:password123@mongodb:27017/secureblog?authSource=admin
+    depends_on:
+      - mongodb
+    volumes:
+      - ./secureblog-backend/ssl:/app/ssl:ro
+    networks:
+      - secureblog-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:5000/health", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend-prod
+    container_name: secureblog-frontend
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - secureblog-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost", "-k"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Development Service (alternative to production services)
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: secureblog-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - MONGO_URI=mongodb://admin:password123@mongodb:27017/secureblog?authSource=admin
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/secureblog-backend/node_modules
+      - /app/secureblog-frontend/node_modules
+    networks:
+      - secureblog-network
+    profiles:
+      - dev
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  secureblog-network:
+    driver: bridge
