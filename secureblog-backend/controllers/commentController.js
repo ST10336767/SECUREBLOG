@@ -17,6 +17,7 @@ exports.submitComment = async (req,res) => {
            res.status(201).json(comment);
 
     } catch (err){
+         console.error('Error creating comment:', err);
          res.status(500).json({ message: "Error creating comment"});
     }
 }

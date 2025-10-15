@@ -1,5 +1,4 @@
 const {body} = require("express-validator");
-const { register } = require("../../controllers/authController");
 
 //shared password strtength rule (mirrors front-end, but authorative here)
 const passwordStrength = body("password")

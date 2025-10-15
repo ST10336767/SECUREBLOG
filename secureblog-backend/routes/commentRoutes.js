@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {protect, requireRole, requireSelfOrRole } = require("../middleware/authMiddleware");
+const {protect, requireRole} = require("../middleware/authMiddleware");
 const {submitComment, viewComments, approveComment} = require("../controllers/commentController");
 
 

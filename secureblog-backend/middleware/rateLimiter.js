@@ -1,5 +1,4 @@
 const { default: rateLimit, ipKeyGenerator } = require("express-rate-limit");
-const { skipMiddlewareFunction } = require("mongoose");
 
 //Site: https://www.npmjs.com/package/express-rate-limit
 
@@ -36,7 +35,7 @@ const loginLimiter = rateLimit({
     message: { message: "Too many login attempts. Try again after 15 mins." },
     legacyHeaders: false, //Disavble x-ratelimit headers
     skipSuccessfulRequests: true,  // dont count successful responses
-    keyGenerator: (req, res) => ipKeyGenerator(req.ip),
+    keyGenerator: (req) => ipKeyGenerator(req.ip),
     //added ->
     handler: (req, res) => {
         bannedIPs[req.ip] = Date.now() + 15*60*1000;
@@ -52,7 +51,7 @@ const registerLimiter = rateLimit({
     limit: 5,
     standardHeaders: 'draft-8',
     message: {message: "Too many registrations."},
-    keyGenerator: (req,res) => ipKeyGenerator(req.ip),
+    keyGenerator: (req) => ipKeyGenerator(req.ip),
     // ipv6Subnet: 56
     
 });
@@ -64,7 +63,7 @@ const bannedEmails = {};
 
 
 
-banner = function(req, res, next) {
+const banner = function(req, res, next) {
   // If the current Date is still before than the unblocking date, 
   // send a 429 message indicating too many requests
   if (bannedIPs[req.ip] >= +new Date()) {
@@ -72,15 +71,15 @@ banner = function(req, res, next) {
   } else {
     next();
   }
-}
+};
 
-bannerEmail = function(req,res,next){
+const bannerEmail = function(req, res, next) {
     if(bannedEmails[req.body.email] >= +new Date()){
-        res.status(429).send("Too many attempts with this email have been made.")
-    }else{
+        res.status(429).send("Too many attempts with this email have been made.");
+    } else {
         next();
     }
-}
+};
 
 
 module.exports = {banner, bannerEmail,loginLimiter, registerLimiter, limiter, emailLimiter};

@@ -33,6 +33,7 @@ exports.getPosts = async (req, res) => {
         const posts = await Post.find({ status: "published"});
         res.json(posts);
     } catch(err) {
+        console.error('Error fetching posts:', err);
         res.status(500).json({message: "Error fetching posts"});
     }
 };
@@ -85,6 +86,7 @@ exports.updatePost = async (req,res) => {
 
     res.json(post);
 } catch (err){
+    console.error('Error updating post:', err);
     res.status(500).json({ message: "Error updating post"});
 }
 

@@ -109,7 +109,7 @@ app.get('/test', (req,res) =>{
 
 //testing for errors -- temp
 app.use((err, req, res, next) => {
-  console.error(err.stack);  // <-- shows full error in te  rminal
+  console.error(err.stack);  // <-- shows full error in terminal
   res.status(500).send(err.message);
 });
 

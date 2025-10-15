@@ -4,7 +4,7 @@ const authController = require("../controllers/authController");
 const {registerRules, loginRules} = require("../src/utils/validators");
 // const rateLimit = require("express-rate-limit")
 const router = express.Router();
-const {registerLimiter, loginLimiter, limiter, emailLimiter, banner} = require("../middleware/rateLimiter");
+const {registerLimiter, loginLimiter, emailLimiter, banner, bannerEmail} = require("../middleware/rateLimiter");
 
 //Brute force limiter for login - Added  --> securing login --> 3) Wiring validators intoroutes
 // const loginLimiter = rateLimit({windowsMS: 10 * 60 * 1000, max: 20});

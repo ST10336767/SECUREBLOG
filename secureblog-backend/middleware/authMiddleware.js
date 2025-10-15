@@ -19,6 +19,7 @@ const protect = (req, res, next) => {
         }
         next();
     } catch(err){
+        console.error('Token validation error:', err);
         res.status(403).json({ message: "Token invalid or expired"});
     }
 };
