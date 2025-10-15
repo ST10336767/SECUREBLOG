@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import { isValidEmail, isStrongPassword } from '../utils/validators';
 
 export default function LoginPage () {

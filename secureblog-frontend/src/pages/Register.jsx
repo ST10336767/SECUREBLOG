@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
 import { isValidEmail, isStrongPassword } from '../utils/validators';
 
 export default function RegisterPage  ()  {
@@ -62,29 +62,6 @@ export default function RegisterPage  ()  {
            setMessage({ text: "Registration failed. Please try again.", type: 'error' });
        }
      }
-
-     const handleSubmit = async (e) => {
-      e.preventDefault();
-      setError(""); // reset error state
-    
-      try {
-        const res = await fetch("http://localhost:5000/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-    
-        const data = await res.json();
-    
-        if (!res.ok) {
-          throw new Error(data.message || "Something went wrong");
-        }
-    
-        console.log("Registered:", data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
 
    } catch (error) {
      // Catch network or other unexpected errors

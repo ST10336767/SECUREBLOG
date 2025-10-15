@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
-import axios from 'axios';
+import React, { useEffect } from 'react';
 
 export default function LogoutPage  ()  {
   useEffect(() => {
