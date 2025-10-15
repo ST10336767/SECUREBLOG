@@ -15,10 +15,40 @@ jobs:
     steps:
       - checkout
       
-      # Restore dependencies cache
-      - node/install-packages:
-          pkg-manager: npm
-          cache-version: v1
+      # Restore cache
+      - restore_cache:
+          keys:
+            - v1-deps-{{ checksum "package-lock.json" }}
+            - v1-deps-{{ checksum "secureblog-backend/package-lock.json" }}
+            - v1-deps-{{ checksum "secureblog-frontend/package-lock.json" }}
+            - v1-deps-
+      
+      # Install root dependencies
+      - run:
+          name: Install Root Dependencies
+          command: npm install
+      
+      # Install backend dependencies
+      - run:
+          name: Install Backend Dependencies
+          command: |
+            cd secureblog-backend
+            npm install
+      
+      # Install frontend dependencies
+      - run:
+          name: Install Frontend Dependencies
+          command: |
+            cd secureblog-frontend
+            npm install
+      
+      # Save cache
+      - save_cache:
+          key: v1-deps-{{ checksum "package-lock.json" }}-{{ checksum "secureblog-backend/package-lock.json" }}-{{ checksum "secureblog-frontend/package-lock.json" }}
+          paths:
+            - node_modules
+            - secureblog-backend/node_modules
+            - secureblog-frontend/node_modules
       
       # Run ESLint on backend
       - run:
@@ -136,4 +166,4 @@ workflows:
             - build-docker
           filters:
             branches:
-              only: main  # Only deploy from main branch
+              only: master  # Only deploy from master branch
